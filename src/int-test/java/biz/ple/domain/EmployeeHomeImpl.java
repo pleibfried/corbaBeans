@@ -7,11 +7,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import biz.ple.corba.annotations.CorbaServant;
 import biz.ple.corba.beans.server.PoaBean;
-import biz.ple_idl.AddressRec;
-import biz.ple_idl.Employee;
-import biz.ple_idl.EmployeeHelper;
-import biz.ple_idl.EmployeeHomeOperations;
-import biz.ple_idl.EmployeeHomePOATie;
+import biz.ple_idl.domain.AddressRec;
+import biz.ple_idl.domain.Employee;
+import biz.ple_idl.domain.EmployeeHelper;
+import biz.ple_idl.domain.EmployeeHomeOperations;
+import biz.ple_idl.domain.EmployeeHomePOATie;
+import biz.ple_idl.domain.ParkingSpace;
 
 
 @CorbaServant(beanName = "employeeHome", poa = "homesPoa", tieClass = EmployeeHomePOATie.class,
@@ -19,6 +20,7 @@ import biz.ple_idl.EmployeeHomePOATie;
 public class EmployeeHomeImpl implements EmployeeHomeOperations {
 
     private PoaBean employeePoa;
+    private PoaBean parkingPoa;
     private EmployeeRepository repo;
 
 
@@ -34,6 +36,14 @@ public class EmployeeHomeImpl implements EmployeeHomeOperations {
 
 
     @Autowired
+    @Qualifier("parkingPoa")
+    public void setParkingPoa(PoaBean parkingPoa)
+    {
+        this.parkingPoa = parkingPoa;
+    }
+
+
+    @Autowired
     public void setRepository(EmployeeRepository repo)
     {
         this.repo = repo;
@@ -43,12 +53,18 @@ public class EmployeeHomeImpl implements EmployeeHomeOperations {
     // Methods which are not part of the IDL interface
     // ===============================================
 
-    public Employee createCorbaReference(EmployeeImpl emp)
+    public Employee createEmployeeRef(EmployeeImpl emp)
     {
         if (emp == null) {
             return null;
         }
         return employeePoa.createObjectReference(fromLong(emp.id()), Employee.class);
+    }
+
+
+    public ParkingSpace createParkingSpaceRef(long oid)
+    {
+        return parkingPoa.createObjectReference(fromLong(oid), ParkingSpace.class);
     }
 
 

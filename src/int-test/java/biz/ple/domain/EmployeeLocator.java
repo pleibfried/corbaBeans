@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import biz.ple.corba.annotations.CorbaServantLocator;
 import biz.ple.corba.util.CorbaObjectId;
 import biz.ple.corba.util.ServantLocatorBase;
-import biz.ple_idl.EmployeePOATie;
+import biz.ple_idl.domain.EmployeePOATie;
 
 
 @CorbaServantLocator(poa = "employeesPoa")

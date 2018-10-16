@@ -14,7 +14,7 @@ import biz.ple.corba.config.CorbaAnnotationProcessing;
 import biz.ple.corba.config.CorbaBasics;
 import biz.ple.corba.util.ServerManagerImpl;
 import biz.ple.domain.CompanyFactory;
-import biz.ple_idl.CompanyHomePOATie;
+import biz.ple_idl.domain.CompanyHomePOATie;
 import biz.ple_idl.srvmgmt.ServerManagerPOATie;
 
 
@@ -36,7 +36,7 @@ public class DomainConfiguration {
     public OrbBean orb() throws Exception
     {
         OrbBean bean = new OrbBean();
-        bean.setNameServiceInitRef("file://c:/JacORB_NSRef.ior");
+        bean.setNameServiceInitRef("file://target/JacORB_NSRef.ior");
         return bean;
     }
 
@@ -72,6 +72,14 @@ public class DomainConfiguration {
     {
         PoaBean bean = new PoaBean(orb().getRootPoa(), "companiesPoa", basics.locatorPoaPolicies());
         bean.setServantLocator(companyFactory());
+        return bean;
+    }
+
+
+    @Bean
+    public PoaBean parkingPoa() throws Exception
+    {
+        PoaBean bean = new PoaBean(orb().getRootPoa(), "parkingPoa", basics.defaultServantPoaPolicies());
         return bean;
     }
 

@@ -19,11 +19,12 @@ import biz.ple.corba.beans.OrbBean;
 import biz.ple.services.ExampleServiceContext;
 import biz.ple.test.config.EmployeesITConfig;
 import biz.ple.test.servers.config.DomainConfiguration;
-import biz.ple_idl.AddressRec;
-import biz.ple_idl.Company;
-import biz.ple_idl.CompanyHome;
-import biz.ple_idl.Employee;
-import biz.ple_idl.EmployeeHome;
+import biz.ple_idl.domain.AddressRec;
+import biz.ple_idl.domain.Company;
+import biz.ple_idl.domain.CompanyHome;
+import biz.ple_idl.domain.Employee;
+import biz.ple_idl.domain.EmployeeHome;
+import biz.ple_idl.domain.ParkingSpace;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -118,6 +119,24 @@ public class EmployeesIT {
 
 
     @Test
+    public void testParkingSpace() throws Exception
+    {
+        String firstName = "Thomas";
+        String lastName = "Edison";
+        AddressRec addr = new AddressRec("Inventor Lane", "4470", 50766, "Genius City");
+        String job = "Product Designer";
+        int salary = 1_000_000;
+        Employee x = empHome.create(firstName, lastName, addr, job, salary);
+
+        assertNotNull(x);
+        ParkingSpace p = x.getParkingSpace();
+        assertNotNull(p);
+        assertEquals("Thomas Edison", p.owner());
+        assertEquals("TE" + String.format("%04d",  x.id()), p.parkingId());
+    }
+
+
+    @Test
     public void testHireAndFire() throws Exception
     {
         // GIVEN
@@ -153,5 +172,6 @@ public class EmployeesIT {
         assertNull(e.getCompany());
         assertEquals(0, c.getEmployees().length);
     }
+
 
 }

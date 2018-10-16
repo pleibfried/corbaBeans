@@ -6,7 +6,7 @@
   
   <groupId>biz.leibfried</groupId>
   <artifactId>corbaBeans</artifactId>
-  <version>1.3.0</version>
+  <version>1.3.1</version>
   
   <name>CORBA Beans</name>
   <description>First Attempt at wrapping CORBA infrastructure with Spring beans</description>
@@ -138,7 +138,6 @@
             </goals>
             <configuration>
               <sources>
-                <!-- source>src/main/generated</source -->
                 <source>target/generated-sources/idl</source>
               </sources>
             </configuration>
@@ -184,18 +183,24 @@
         </executions>
         <configuration>
           <compiler>jacorb</compiler>
-          <includeDirs>
-            <includeDir>${basedir}/src/main/idl</includeDir>
-          </includeDirs>
-          <sources>
+          <sourceDirectory>${basedir}/src</sourceDirectory>
+          <sources>          
             <source>
               <additionalArguments>
                 <additionalArgument>-d</additionalArgument>
-                <!--additionalArgument>${basedir}\src\main\generated</additionalArgument -->
                 <additionalArgument>${basedir}\target\generated-sources\idl</additionalArgument>
               </additionalArguments>
               <includes>
-                <include>*.idl</include>                
+                <include>int-test/idl/DomainModel.idl</include>                
+              </includes>              
+            </source>
+            <source>
+              <additionalArguments>
+                <additionalArgument>-d</additionalArgument>
+                <additionalArgument>${basedir}\target\generated-sources\idl</additionalArgument>
+              </additionalArguments>
+              <includes>
+                <include>main/idl/ServerManager.idl</include>
               </includes>
             </source>
           </sources>
@@ -265,7 +270,8 @@
                 <argument>-Dorg.omg.CORBA.ORBClass=org.jacorb.orb.ORB</argument>
                 <argument>-Dorg.omg.CORBA.ORBSingletonClass=org.jacorb.orb.ORBSingleton</argument>
                 <argument>-Djacorb.log.default.verbosity=0</argument>  
-                <argument>-Djacorb.naming.ior_filename=C:\\JacORB_NSRef.ior</argument>
+                <!-- argument>-Djacorb.naming.ior_filename=C:\\JacORB_NSRef.ior</argument -->
+                <argument>-Djacorb.naming.ior_filename=JacORB_NSRef.ior</argument>
                 <argument>org.jacorb.naming.NameServer</argument>
               </arguments>
             </configuration>

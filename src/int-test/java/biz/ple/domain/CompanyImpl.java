@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import biz.ple_idl.AddressRec;
-import biz.ple_idl.CompanyPOA;
-import biz.ple_idl.Employee;
+import biz.ple_idl.domain.AddressRec;
+import biz.ple_idl.domain.CompanyPOA;
+import biz.ple_idl.domain.Employee;
 
 
 public class CompanyImpl extends CompanyPOA {

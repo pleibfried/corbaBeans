@@ -21,7 +21,7 @@
   <!-- The ORB, including service context definitions -->
     
   <bean id="orb" class="biz.ple.corba.beans.OrbBean">
-    <property name="nameServiceInitRef" value="file://c:/JacORB_NSRef.ior" />
+    <property name="nameServiceInitRef" value="file://target/JacORB_NSRef.ior" />
     <property name="serviceContextDefinitions">
       <list>
         <bean class="biz.ple.corba.beans.ServiceContextDefinition">
@@ -65,13 +65,13 @@
   <bean id="companyHome" class="biz.ple.corba.beans.NamedReferenceLookup" factory-method="lookup">
     <constructor-arg name="namingCtx" ref="applicationCtx" />
     <constructor-arg name="name" value="companyHome.obj" />
-    <constructor-arg name="interfaceClass" value="biz.ple_idl.CompanyHome" />
+    <constructor-arg name="interfaceClass" value="biz.ple_idl.domain.CompanyHome" />
   </bean>
 
   <bean id="employeeHome" class="biz.ple.corba.beans.NamedReferenceLookup" factory-method="lookup">
     <constructor-arg name="namingCtx" ref="applicationCtx" />
     <constructor-arg name="name" value="employeeHome.obj" />
-    <constructor-arg name="interfaceClass" value="biz.ple_idl.EmployeeHome" />
+    <constructor-arg name="interfaceClass" value="biz.ple_idl.domain.EmployeeHome" />
   </bean>
               
 </beans>

@@ -1,3 +1,7 @@
+[Version 1.3.1  2018-10-16  Philipp Leibfried]
+ * Added new IDL interface implemented by Default Servant to the integration tests
+ * During tests, Name Service writes the Root Naming Context IOR to build dir and not to C:\
+
 [Version 1.3.0  2018-10-13  Philipp Leibfried]
  * JavaDoc is complete for all classes, interfaces and annotations
  * Project structure and test cases improved; run 'unattended' on command line

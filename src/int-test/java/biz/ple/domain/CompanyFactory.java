@@ -17,11 +17,11 @@ import org.slf4j.LoggerFactory;
 
 import biz.ple.corba.util.CorbaObjectId;
 import biz.ple.corba.util.ServantLocatorBase;
-import biz.ple_idl.AddressRec;
-import biz.ple_idl.Company;
-import biz.ple_idl.CompanyHelper;
-import biz.ple_idl.CompanyHome;
-import biz.ple_idl.CompanyHomeOperations;
+import biz.ple_idl.domain.AddressRec;
+import biz.ple_idl.domain.Company;
+import biz.ple_idl.domain.CompanyHelper;
+import biz.ple_idl.domain.CompanyHome;
+import biz.ple_idl.domain.CompanyHomeOperations;
 
 
 /**

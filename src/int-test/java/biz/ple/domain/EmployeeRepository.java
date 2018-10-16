@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Component;
 
-import biz.ple_idl.AddressRec;
+import biz.ple_idl.domain.AddressRec;
 
 
 @Component

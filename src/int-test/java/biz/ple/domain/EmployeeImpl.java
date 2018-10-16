@@ -1,9 +1,10 @@
 package biz.ple.domain;
 
-import biz.ple_idl.AddressRec;
-import biz.ple_idl.Company;
-import biz.ple_idl.Employee;
-import biz.ple_idl.EmployeeOperations;
+import biz.ple_idl.domain.AddressRec;
+import biz.ple_idl.domain.Company;
+import biz.ple_idl.domain.Employee;
+import biz.ple_idl.domain.EmployeeOperations;
+import biz.ple_idl.domain.ParkingSpace;
 
 
 public class EmployeeImpl implements EmployeeOperations {
@@ -137,7 +138,7 @@ public class EmployeeImpl implements EmployeeOperations {
         company = newCompany;
         Employee corbaThis = null;
         if (del != null || company != null) {
-            corbaThis = home.createCorbaReference(this);
+            corbaThis = home.createEmployeeRef(this);
         }
         if (del != null) {
            del.fire(corbaThis);
@@ -145,6 +146,13 @@ public class EmployeeImpl implements EmployeeOperations {
         if (company != null) {
             company.hire(corbaThis);
         }
+    }
+
+
+    @Override
+    public ParkingSpace getParkingSpace()
+    {
+        return home.createParkingSpaceRef(this.id);
     }
 
 }

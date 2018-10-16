@@ -53,7 +53,7 @@
   </bean>
   
   
-  <bean id="defaultServantPolicies" parent="activatorPolicies">
+  <bean id="defaultServantPolicies" parent="locatorPolicies">
     <property name="policies">
       <map merge="true">
         <entry key="RequestProcessing" value="UseDefaultServant" />

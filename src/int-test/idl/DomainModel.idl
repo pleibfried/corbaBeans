@@ -1,12 +1,20 @@
 
 module biz {
 module ple_idl {
+module domain {
 
     struct AddressRec {
         string street;
         string number;
         long   zipCode;
         string city;
+    };
+    
+    interface ParkingSpace {
+    
+        readonly attribute string parkingId;
+        readonly attribute string owner;
+        
     };
 
     interface Company;
@@ -24,6 +32,8 @@ module ple_idl {
 		Company getCompany();
 		   void setCompany(in Company c);
 		                
+        ParkingSpace getParkingSpace();
+        
 	};
 	
 	typedef sequence<Employee> employeeSeq;
@@ -70,5 +80,6 @@ module ple_idl {
         void       deleteById(in long long id);
     };
 	
+};
 };
 };

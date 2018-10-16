@@ -24,7 +24,7 @@
   
   <!-- The Object Request Broker bean -->  
   <bean id="orb" class="biz.ple.corba.beans.OrbBean">
-    <property name="nameServiceInitRef" value="file://c:/JacORB_NSRef.ior" />
+    <property name="nameServiceInitRef" value="file://target/JacORB_NSRef.ior" />
     <property name="serviceContextDefinitions">
       <list>
         <ref bean="exampleService" />         
@@ -72,8 +72,15 @@
     <constructor-arg name="policies" ref="locatorPolicies" />
     <property name="servantLocator" ref="companyFactory" />
   </bean>
-
  
+  <bean id="parkingPoa" class="biz.ple.corba.beans.server.PoaBean">
+    <constructor-arg name="parentPoaBean" value="#{orb.rootPoa}" />
+    <constructor-arg name="name" value="parkingPoa" />
+    <constructor-arg name="policies" ref="defaultServantPolicies" />
+    <property name="defaultServant" ref="parkingSpaceDefaultServant" />
+  </bean>
+
+
   <!-- Service Context Definitions -->
   
   <bean id="exampleService" class="biz.ple.corba.beans.ServiceContextDefinition">
@@ -92,7 +99,7 @@
   
   <bean id="employeeHome" class="biz.ple.corba.beans.server.NamedServantObject">
     <constructor-arg name="poaBean" ref="homesPoa" />
-    <constructor-arg name="tieClass" value="biz.ple_idl.EmployeeHomePOATie" />
+    <constructor-arg name="tieClass" value="biz.ple_idl.domain.EmployeeHomePOATie" />
     <constructor-arg name="servant" ref="employeeHomeImpl" />
     <constructor-arg name="namingCtxWrapper" ref="applicationCtx" />
     <constructor-arg name="name" value="employeeHome.obj" />
@@ -100,7 +107,7 @@
 
   <bean id="companyHome" class="biz.ple.corba.beans.server.NamedServantObject">
     <constructor-arg name="poaBean" ref="homesPoa" />
-    <constructor-arg name="tieClass" value="biz.ple_idl.CompanyHomePOATie" />
+    <constructor-arg name="tieClass" value="biz.ple_idl.domain.CompanyHomePOATie" />
     <constructor-arg name="servant" ref="companyFactory" />
     <constructor-arg name="namingCtxWrapper" ref="applicationCtx" />
     <constructor-arg name="name" value="companyHome.obj" />
@@ -108,6 +115,7 @@
 
   <bean id="employeeHomeImpl" class="biz.ple.domain.EmployeeHomeImpl">
     <property name="employeePoa" ref="employeesPoa" />
+    <property name="parkingPoa" ref="parkingPoa" />
     <property name="repository" ref="employeeRepo" />
   </bean>
   
@@ -118,5 +126,9 @@
   <bean id="employeeRepo" class="biz.ple.domain.EmployeeRepository" />
 
   <bean id="companyFactory" class="biz.ple.domain.CompanyFactory" />  
+  
+  <bean id="parkingSpaceDefaultServant" class="biz.ple.domain.ParkingSpaceDefaultServant">
+    <constructor-arg name="employeeRepo" ref="employeeRepo" />
+  </bean>
   
 </beans>

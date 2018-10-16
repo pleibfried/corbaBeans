@@ -36,7 +36,7 @@ public class EmployeesITConfig {
     public OrbBean orb() throws Exception
     {
         OrbBean bean = new OrbBean();
-        bean.setNameServiceInitRef("file://c:/JacORB_NSRef.ior");
+        bean.setNameServiceInitRef("file://target/JacORB_NSRef.ior");
         return bean;
     }
 
