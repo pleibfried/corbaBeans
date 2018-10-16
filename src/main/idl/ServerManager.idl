@@ -1,0 +1,14 @@
+
+module biz {
+module ple_idl {
+module srvmgmt {
+
+	interface ServerManager {
+	
+		void shutdownServer(in boolean waitForCompletion);
+		
+	};
+
+};
+};
+};

@@ -1,0 +1,74 @@
+
+module biz {
+module ple_idl {
+
+    struct AddressRec {
+        string street;
+        string number;
+        long   zipCode;
+        string city;
+    };
+
+    interface Company;
+    
+	interface Employee {	
+	
+	    readonly attribute long long id;
+	
+		attribute string     firstName;
+		attribute string     lastName;
+		attribute AddressRec address;
+		attribute string     jobDescription;
+		attribute long       salary;
+		
+		Company getCompany();
+		   void setCompany(in Company c);
+		                
+	};
+	
+	typedef sequence<Employee> employeeSeq;
+	
+	interface EmployeeHome {
+	
+	   Employee    create(in string firstName, in string lastName, 
+	                      in AddressRec address, in string job, in long salary);
+	                              
+	   Employee    findById(in long long id);
+	   employeeSeq findAll();
+	   
+	   void        delete(in Employee emp);
+	   void        deleteById(in long long id);
+	   
+	};
+
+
+    interface Company {
+    
+        readonly attribute long long id;
+    
+                 attribute string     name;
+                 attribute AddressRec address;
+                 attribute string     taxId;
+        readonly attribute long       numberOfEmployees;
+        
+                      void hire(in Employee emp);
+                      void fire(in Employee emp);
+               employeeSeq getEmployees();        
+               
+    };	
+    
+    typedef sequence<Company> companySeq;
+    
+    interface CompanyHome {
+    
+        Company    create(in string name, in AddressRec address, in string taxId);
+        
+        Company    findById(in long long id);
+        companySeq findAll();
+        
+        void       delete(in Company comp);
+        void       deleteById(in long long id);
+    };
+	
+};
+};

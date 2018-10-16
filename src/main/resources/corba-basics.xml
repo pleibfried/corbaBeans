@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.springframework.org/schema/beans" 
+  xmlns:ctx="http://www.springframework.org/schema/context"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:jee="http://www.springframework.org/schema/jee"
+  xmlns:sec="http://www.springframework.org/schema/security"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                      http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd                    
+                      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+                      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+                      http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+                      http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+  
+  <!-- POA policy sets -->
+  
+  <bean id="defaultPoaPolicies" class="biz.ple.corba.beans.server.PoaPolicies">
+    <property name="policies">
+      <map>
+        <entry key="IdAssignment" value="System" />
+        <entry key="IdUniqueness" value="Unique" />
+        <entry key="ImplicitActivation" value="NoImplicitActivation" />
+        <entry key="Lifespan" value="Transient" />
+        <entry key="RequestProcessing" value="UseActiveObjectMapOnly" />
+        <entry key="ServantRetention" value="Retain" />
+        <entry key="Thread" value="OrbCtrlModel" />
+      </map>
+    </property>
+  </bean>
+  
+  
+  <bean id="locatorPolicies" parent="defaultPoaPolicies">
+    <property name="policies">
+      <map merge="true">
+        <entry key="ServantRetention" value="NonRetain" />
+        <entry key="IdAssignment" value="User" />
+        <entry key="RequestProcessing" value="UseServantManager" />
+      </map>
+    </property>
+  </bean>
+  
+  
+  <bean id="activatorPolicies" parent="locatorPolicies">
+    <property name="policies">
+      <map merge="true">
+        <entry key="ServantRetention" value="Retain" />
+      </map>
+    </property>
+  </bean>
+  
+  
+  <bean id="defaultServantPolicies" parent="activatorPolicies">
+    <property name="policies">
+      <map merge="true">
+        <entry key="RequestProcessing" value="UseDefaultServant" />
+      </map>
+    </property>
+  </bean>
+
+</beans>

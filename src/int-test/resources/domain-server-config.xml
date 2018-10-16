@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.springframework.org/schema/beans" 
+  xmlns:ctx="http://www.springframework.org/schema/context"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:jee="http://www.springframework.org/schema/jee"
+  xmlns:sec="http://www.springframework.org/schema/security"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                      http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd                    
+                      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+                      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+                      http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+                      http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+  
+  <!-- No component scan, no CorbaBeans-specific postprocessors -->
+
+  <ctx:annotation-config />
+  
+  <import resource="classpath:corba-basics.xml" />
+  
+  <!-- The Object Request Broker bean -->  
+  <bean id="orb" class="biz.ple.corba.beans.OrbBean">
+    <property name="nameServiceInitRef" value="file://c:/JacORB_NSRef.ior" />
+    <property name="serviceContextDefinitions">
+      <list>
+        <ref bean="exampleService" />         
+      </list>
+    </property>
+  </bean> 
+
+  <!-- Some naming contexts for our services -->
+  
+  <bean id="applicationCtx" class="biz.ple.corba.beans.NamingContextBean">
+    <constructor-arg name="parentCtx" value="#{orb.rootNamingCtx}" />
+    <constructor-arg name="path" value="applications.ctx/domainApp.ctx" />
+  </bean>
+  
+  <bean id="serverManagerCtx" class="biz.ple.corba.beans.NamingContextBean">
+    <constructor-arg name="parentCtx" value="#{orb.rootNamingCtx}" />
+    <constructor-arg name="path" value="servers.ctx/domainServer.management" />
+  </bean>
+  
+  
+  <!-- Various POAs with different policy sets -->  
+  
+  <bean id="homesPoa" class="biz.ple.corba.beans.server.PoaBean">
+    <constructor-arg name="parentPoaBean" value="#{orb.rootPoa}" />
+    <constructor-arg name="name" value="homesPoa" />
+    <constructor-arg name="policies" ref="defaultPoaPolicies" />
+  </bean>
+    
+  <bean id="servantManagerPoa" class="biz.ple.corba.beans.server.PoaBean">
+    <constructor-arg name="parentPoaBean" value="#{orb.rootPoa}" />
+    <constructor-arg name="name" value="servantManagerPoa" />
+    <constructor-arg name="policies" ref="defaultPoaPolicies" />
+  </bean>  
+  
+  <bean id="employeesPoa" class="biz.ple.corba.beans.server.PoaBean">
+    <constructor-arg name="parentPoaBean" value="#{orb.rootPoa}" />
+    <constructor-arg name="name" value="employeesPoa" />
+    <constructor-arg name="policies" ref="locatorPolicies" />
+    <property name="servantLocator" ref="employeeServantLocator" />
+  </bean>
+
+  <bean id="companiesPoa" class="biz.ple.corba.beans.server.PoaBean">
+    <constructor-arg name="parentPoaBean" value="#{orb.rootPoa}" />
+    <constructor-arg name="name" value="companiesPoa" />
+    <constructor-arg name="policies" ref="locatorPolicies" />
+    <property name="servantLocator" ref="companyFactory" />
+  </bean>
+
+ 
+  <!-- Service Context Definitions -->
+  
+  <bean id="exampleService" class="biz.ple.corba.beans.ServiceContextDefinition">
+    <constructor-arg name="manager">
+      <bean class="biz.ple.services.ExampleServiceContext" />
+    </constructor-arg>
+    <constructor-arg name="clientInterceptor">
+      <bean class="biz.ple.services.ExampleSvcCltReqInterceptor" />
+    </constructor-arg>
+    <constructor-arg name="serverInterceptor">
+      <bean class="biz.ple.services.ExampleSvcSrvReqInterceptor" />
+    </constructor-arg>
+  </bean>
+  
+  <!-- The actual services (IDL interface implementations) -->
+  
+  <bean id="employeeHome" class="biz.ple.corba.beans.server.NamedServantObject">
+    <constructor-arg name="poaBean" ref="homesPoa" />
+    <constructor-arg name="tieClass" value="biz.ple_idl.EmployeeHomePOATie" />
+    <constructor-arg name="servant" ref="employeeHomeImpl" />
+    <constructor-arg name="namingCtxWrapper" ref="applicationCtx" />
+    <constructor-arg name="name" value="employeeHome.obj" />
+  </bean>  
+
+  <bean id="companyHome" class="biz.ple.corba.beans.server.NamedServantObject">
+    <constructor-arg name="poaBean" ref="homesPoa" />
+    <constructor-arg name="tieClass" value="biz.ple_idl.CompanyHomePOATie" />
+    <constructor-arg name="servant" ref="companyFactory" />
+    <constructor-arg name="namingCtxWrapper" ref="applicationCtx" />
+    <constructor-arg name="name" value="companyHome.obj" />
+  </bean>  
+
+  <bean id="employeeHomeImpl" class="biz.ple.domain.EmployeeHomeImpl">
+    <property name="employeePoa" ref="employeesPoa" />
+    <property name="repository" ref="employeeRepo" />
+  </bean>
+  
+  <bean id="employeeServantLocator" class="biz.ple.domain.EmployeeLocator">
+    <property name="employeeRepository" ref="employeeRepo" />
+  </bean>
+  
+  <bean id="employeeRepo" class="biz.ple.domain.EmployeeRepository" />
+
+  <bean id="companyFactory" class="biz.ple.domain.CompanyFactory" />  
+  
+</beans>

@@ -1,0 +1,29 @@
+[Version 1.3.0  2018-10-13  Philipp Leibfried]
+ * JavaDoc is complete for all classes, interfaces and annotations
+ * Project structure and test cases improved; run 'unattended' on command line
+ * Various tweaks, removed some unnecessary code
+
+[Version 1.2.0  2018-09-20  Philipp Leibfried]
+ * Added @CorbaClientInterceptor annotation and corresponding bean postprocessing code
+ * Added @CorbaServerInterceptor annotation and corresponding bean postprocessing code
+ * Added @CorbaServiceContextManager annotation and corresponding bean postprocessing code
+ * Added support for service context management and standalone interceptors
+ * PoaBean injects itself into servant locators and activators if those implement PoaInjectable
+ * Convenience methods for creating object references added to PoaBean class
+ * Much better, more meaningful integration tests 
+
+[Version 1.1.0  2018-09-14  Philipp Leibfried]
+ * Added @CorbaDefaultServant annotation and corresponding bean post processing code
+ * Changed name of NamingContext bean class to NamingContextBean to prevent confusion
+ * Enhanced PoaBean to provide access to the POACurrent, inject POA into DefaultServant
+ * Added tests for DefaultServant and the @CorbaDefaultServant annotation 
+
+[Version 1.0.0  2018-09-10  Philipp Leibfried]
+ * Added @CorbaServant annotation and corresponding bean post processing code
+ * Added @CorbaRef annotation and corresponding bean post processing code
+ * Added @ServantLocator and @ServantActivator annotations and corresponding bean post processing code
+
+[Version 0.0.1  2013-12-31  Philipp Leibfried]
+ * First iteration
+ * All beans fully functional
+ 

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.springframework.org/schema/beans" 
+  xmlns:ctx="http://www.springframework.org/schema/context"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:jee="http://www.springframework.org/schema/jee"
+  xmlns:sec="http://www.springframework.org/schema/security"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                      http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd                    
+                      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+                      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+                      http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+                      http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+  <!-- No annotation config! -->
+
+  <!-- The ORB, including service context definitions -->
+    
+  <bean id="orb" class="biz.ple.corba.beans.OrbBean">
+    <property name="nameServiceInitRef" value="file://c:/JacORB_NSRef.ior" />
+    <property name="serviceContextDefinitions">
+      <list>
+        <bean class="biz.ple.corba.beans.ServiceContextDefinition">
+          <constructor-arg name="manager" ref="exampleServiceContextManager" />
+          <constructor-arg name="clientInterceptor">
+            <bean class="biz.ple.services.ExampleSvcCltReqInterceptor" />
+          </constructor-arg>
+        </bean>        
+      </list>
+    </property>
+  </bean> 
+
+
+  <!-- Naming Contexts (lookup only, as usual for clients) -->
+  
+  <bean id="srvMgrCtx" class="biz.ple.corba.beans.NamingContextBean">
+    <constructor-arg name="parentCtx" value="#{orb.rootNamingCtx}" />
+    <constructor-arg name="path" value="servers.ctx/domainServer.management" />
+    <property name="lookupOnly" value="true" />
+  </bean>
+  
+  <bean id="applicationCtx" class="biz.ple.corba.beans.NamingContextBean">
+    <constructor-arg name="parentCtx" value="#{orb.rootNamingCtx}" />
+    <constructor-arg name="path" value="applications.ctx/domainApp.ctx" />
+    <property name="lookupOnly" value="true" />
+  </bean>
+  
+  
+  <!-- Service Context Managers -->
+  
+  <bean id="exampleServiceContextManager" class="biz.ple.services.ExampleServiceContext" />
+    
+  <!-- Named services -->
+  
+  <bean id="serverManager" class="biz.ple.corba.beans.NamedReferenceLookup" factory-method="lookup">
+    <constructor-arg name="namingCtx" ref="srvMgrCtx" />
+    <constructor-arg name="name" value="serverManager.obj" />
+    <constructor-arg name="interfaceClass" value="biz.ple_idl.srvmgmt.ServerManager" /> 
+  </bean>
+  
+  <bean id="companyHome" class="biz.ple.corba.beans.NamedReferenceLookup" factory-method="lookup">
+    <constructor-arg name="namingCtx" ref="applicationCtx" />
+    <constructor-arg name="name" value="companyHome.obj" />
+    <constructor-arg name="interfaceClass" value="biz.ple_idl.CompanyHome" />
+  </bean>
+
+  <bean id="employeeHome" class="biz.ple.corba.beans.NamedReferenceLookup" factory-method="lookup">
+    <constructor-arg name="namingCtx" ref="applicationCtx" />
+    <constructor-arg name="name" value="employeeHome.obj" />
+    <constructor-arg name="interfaceClass" value="biz.ple_idl.EmployeeHome" />
+  </bean>
+              
+</beans>
