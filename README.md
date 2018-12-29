@@ -99,10 +99,97 @@ public class SomeSpringBean {
 ```
 Note that a `@CorbaRef` annotation including the `rootCtxBean` attribute always works, whereas the simpler form above only works if exactly one ORB instance is present in the application (which is usually the case for client applications).
 
+### XML configuration
+
+It is of course possible to configure CORBA clients using the "traditional" Spring XML configuration. For example, given a configuration equivalent to the one above, you can provide a Sring bean named "employeeHome" which is a remote reference of type `EmployeeHome` by declaring the following in your Spring XML configuration:
+```
+<bean id="employeeHome" class="biz.ple.corba.beans.NamedReferenceLookup" factory-method="lookup">
+  <constructor-arg name="namingCtx" ref="appCtx" />
+  <constructor-arg name="name" value="employeeHome.service" />
+  <constructor-arg name="interfaceClass" value="EmployeeHome" />
+</bean>
+```
+The ORB and Naming Service Contexts can also be configured via XML; look into the integration tests to find some examples.
+
 ## Basic server applications
 
-(coming soon) 
+On the server side, in addition to an ORB (encapsulated by an `OrbBean`), you also need a POA (encapsulated by a `PoaBean`) with which to register the interface implementation (servant) you provide. The `CorbaBasics` configuration class provides a set of POA policy mixes covering the most relevant cases. In case of a simple service implementation, of which there is exactly one instance, the "default POA policies" is appropriate. To make the servant accessible to clients, a reference to it needs to be registered with the CORBA Name Service; we'll put it into the name context referenced in the client code above. Accordingly, the Spring configuration should look something like this:
+```
+@Configuration
+@Import({ CorbaBasics.class, CorbaAnnotationProcessing.class })
+public class MySpringConfig {
 
-This documentation is a work in progress. In the meantime, the integration tests of the project provide extensive usage examples for CorbaBeans.
+  @Autowired
+  CorbaBasics corbaBasics;
+
+  @Bean
+  public OrbBean orb() throws Exception 
+  {
+    OrbBean orb = new OrbBean();
+    bean.setNameServiceInitRef("file://somepath/JacORB_NSRef.ior");
+    return orb;
+  }
+    
+  @Bean
+  public PoaBean simplePoa() throws Exception
+  {
+    return new PoaBean(orb().getRootPoa(), "simplePoa", corbaBasics.defaultPoaPolicies());
+  }
+  
+  @Bean
+  public NamingContextBean appCtx() throws Exception
+  {
+    return new NamingContextBean(orb().getRootNamingCtx(), "applications/myApp.prog");
+  }
+  
+}
+```
+Note that the name "simplePoa" passed to the `PoaBean` constructor need not be the same as the Spring bean name - it is the POA's name in the ORB's POA hierarchy and has nothing to do with Spring bean names. To avoid confusion however, it is best to use the same name for the POA itself and the Spring bean encapsulating it.
+
+To register the implementation of the `EmployeeHome` interface with the POA and the Name Service, you can write a bean method returning an instance of class `NamedServantObject`, to which you pass the actual implementation as a constructor argument. An even simpler way is to annotate your implementation class with `@CorbaServant`, as follows:
+```
+@CorbaServant(beanName = "employeeHome", poa = "simplePoa", tieClass = EmployeeHomePOATie.class,
+              cosNamingCtx = "appCtx", cosNamingName = "employeeHome.service")
+public class EmployeeHomeImpl implements EmployeeHomeOperations {
+
+    // implementation of EmployeeHome interface goes here ...
+    
+}
+```
+If you'd rather not use the "TIE approach" for registering your implementation with the POA, have it extend the (generated) `EmployeeHomePOA` class and do not specify a `tieClass` attribute in the annotation:
+```
+@CorbaServant(beanName = "employeeHome", poa = "simplePoa", 
+              cosNamingCtx = "appCtx", cosNamingName = "employeeHome.service")
+public class EmployeeHomeImpl extends EmployeeHomePOA {
+
+    // implementation of EmployeeHome interface goes here ...
+    
+}
+```
+Note that in both cases, the Spring bean named "employeeHome" will be of type `NamedServantObject` and *not* of type `EmployeeHomeImpl`. 
+
+After starting the Spring application containing the above configuration and implementation classes, your client application should be able to access your `EmployeeHome` implementation, i.e. invoke methods on it.
+
+### XML configuration
+
+It is of course possible to configure CORBA servers using the "traditional" Spring XML configuration. For example, given a configuration equivalent to the one above, you can register an instance of `EmployeeHomeImpl` with the POA and Name Service by removing the `@CorbaServant` annotation from the `EmployeeHomeImpl` class and declaring the following in an XML configuration:
+```
+<bean id="employeeHomeImpl" class="your.package.EmployeeHomeImpl">
+  <!-- plus whatever properties/constructor arguments your class needs -->
+</bean>
+
+<bean id="employeeHome" class="biz.ple.corba.beans.server.NamedServantObject">
+  <constructor-arg name="poaBean" ref="simplePoa" />
+  <constructor-arg name="tieClass" value="biz.ple_idl.domain.EmployeeHomePOATie" />
+  <constructor-arg name="servant" ref="employeeHomeImpl" />
+  <constructor-arg name="namingCtxWrapper" ref="appCtx" />
+  <constructor-arg name="name" value="employeeHome.service" />
+</bean>  
+```
+It is **very important** that in this case, you either not annotate `EmployeeHomeImpl` with `@CorbaServant` or disable annotation processing at least for CorbaBeans (by not importing `CorbaAnnotationProcessing` in your configuration and making sure that no beans of class `CorbaBeanPostProcessor` and `CorbaBeanFactoryPostProcessor` are present in your Spring application context). You could also just switch off annotation configuration for your entire Spring container.
+
+## CORBA Service Contexts and complex server applications
+
+More on this topic to come soon ... This documentation is a work in progress. In the meantime, the integration tests of the project provide extensive usage examples for CorbaBeans.
 
 
